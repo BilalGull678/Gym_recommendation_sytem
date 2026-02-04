@@ -1,5 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
+from dateutil.relativedelta import relativedelta
+# load_book_data.py ki line 3
+
 
 class Exercise(models.Model):
     CATEGORY_CHOICES = [
@@ -47,11 +51,29 @@ class Prescription(models.Model):
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    training_start_date = models.DateField(default=timezone.now)
+    training_age = models.IntegerField(default=1) # <--- Yeh line add karein
+    training_age = models.IntegerField(default=1)  # <--- Yeh line add karein
     dob = models.DateField(null=True, blank=True)
-    # training_age is program-level training age (1, 2, 3, 4, 5, ...)
-    # Default to 1 on signup as you requested
-    training_age = models.IntegerField(default=1)
+    is_verified = models.BooleanField(default=False)
+    otp = models.CharField(max_length=6, null=True, blank=True)
 
-    def __str__(self):
-        return f"Profile for {self.user.username} (training_age={self.training_age})"
+    @property
+    def current_training_month(self):
+        # Aaj ki date aur join date ka farq nikaal kar month calculate karna
+        delta = relativedelta(timezone.now().date(), self.training_start_date)
+        return (delta.years * 12) + delta.months + 1
+
+# programs/models.py mein
+class WorkoutSlotLogic(models.Model):
+    training_bracket = models.CharField(max_length=10)
+    phase = models.IntegerField()
+    slot_number = models.IntegerField()
+    movement_pattern = models.CharField(max_length=100)
+    base_exercise = models.TextField()
+    progression_exercise = models.TextField(null=True, blank=True)
+    regression_exercise = models.TextField(null=True, blank=True)  # regression_exercise (as per script)
+
+    class Meta:
+        unique_together = ('training_bracket', 'phase', 'slot_number')

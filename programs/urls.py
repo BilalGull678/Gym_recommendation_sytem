@@ -8,7 +8,13 @@ from .views import (
     SignupAPI,
     AdminUpdateTrainingAgeAPI,
     UserScheduleAPI,
-    LoginAndGetJWT
+    LoginAndGetJWT,
+    MyWorkoutOptionsAPI,
+    ForgetPasswordRequestAPI,
+    PasswordResetConfirmAPI,
+    VerifyEmailAndSendOTP,
+    VerifyResetLinkAndSendOTP,
+    FinalPasswordResetAPI,
 )
 
 urlpatterns = [
@@ -21,4 +27,10 @@ urlpatterns = [
     path("my-schedule/", UserScheduleAPI.as_view()),
     path('api-token-auth/', obtain_auth_token),  # POST username & password -> {"token": "..."},
     path("login/", LoginAndGetJWT.as_view(), name="login_and_get_jwt"),
+    path("my-options/", MyWorkoutOptionsAPI.as_view()),
+    path("reset-password-confirm/<uidb64>/<token>/", PasswordResetConfirmAPI.as_view()),
+    path('verify-email/<uidb64>/<token>/', VerifyEmailAndSendOTP.as_view(), name='verify-email'),
+    path('forget-password/', ForgetPasswordRequestAPI.as_view(), name='forget_password'),
+path('verify-reset-link/<uidb64>/<token>/', VerifyResetLinkAndSendOTP.as_view(), name='verify_reset_link'),
+path('reset-password-final/<uidb64>/<token>/', FinalPasswordResetAPI.as_view(), name='reset_password_final'),
 ]

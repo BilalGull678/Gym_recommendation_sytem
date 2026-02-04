@@ -11,16 +11,38 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
+import environ
+import os
+
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False)
+)
+
+
+
+
+# Brevo Settings
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
+
+SECRET_KEY = env('SECRET_KEY')
+BREVO_API_KEY = env('BREVO_API_KEY')
+DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
+DEBUG = env('DEBUG')
+
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-z-o3nqgr-qcs@j&*gyeqr+$ty@s^-$@a2e@--403vb@d6zn!4g'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -41,6 +63,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'programs',
     'rest_framework.authtoken',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 MIDDLEWARE = [
@@ -58,7 +81,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'], # <--- Yeh add kar sakte hain
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -83,13 +106,33 @@ DATABASES = {
     }
 }
 
+# settings.py mein isay replace karein
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication', # Isay comment kar dein
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
     ),
 }
-
+SIMPLE_JWT = {
+    # Access Token kitni dair chale ga (e.g., 1 din)
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    
+    # Refresh Token kitni dair chale ga (e.g., 7 din)
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    
+    # Kya token use hone par refresh token expire ho jaye?
+    'ROTATE_REFRESH_TOKENS': True,
+    
+    # Purane refresh tokens ko blacklist karna (Security ke liye)
+    'BLACKLIST_AFTER_ROTATION': True,
+    
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
@@ -125,3 +168,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+

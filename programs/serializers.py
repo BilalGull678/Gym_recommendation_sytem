@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Exercise, Prescription, UserProfile
+from django.contrib.auth import authenticate
+from rest_framework_simplejwt.tokens import RefreshToken
 
 class ExerciseSerializer(serializers.ModelSerializer):
     class Meta:
@@ -24,21 +26,26 @@ class WorkoutResultSerializer(serializers.Serializer):
 class SignupSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only=True)
+    email = serializers.EmailField() # <--- Yeh line lazmi add karein
     dob = serializers.DateField(required=False, allow_null=True)
 
     def validate_username(self, value):
         if User.objects.filter(username=value).exists():
             raise serializers.ValidationError("Username already exists")
         return value
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("A user with this email already exists.")
+        return value
 
     def create(self, validated_data):
         user = User.objects.create_user(
             username=validated_data["username"],
+            email=validated_data["email"], # <--- Yeh line bhi add karein
             password=validated_data["password"]
         )
         profile = user.profile
         profile.dob = validated_data.get("dob")
-        profile.training_age = 1
         profile.save()
         return user
     
