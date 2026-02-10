@@ -1,1 +1,1 @@
-web: gunicorn gym_system.wsgi
+web: gunicorn config.wsgi
