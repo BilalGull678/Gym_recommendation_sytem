@@ -130,7 +130,7 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
     
     'ALGORITHM': 'HS256',
-    'SIGNING_KEY': SECRET_KEY,
+    'SIGNING_KEY': 'django-insecure-z-o3nqgr-qcs@j&*gyeqr+$ty@s^-$@a2e@--403vb@d6zn!4g',
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 # Password validation
