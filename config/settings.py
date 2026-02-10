@@ -31,9 +31,11 @@ env = environ.Env(
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+env = environ.Env()
+environ.Env.read_env()
 
 
-SECRET_KEY = env('django-insecure-z-o3nqgr-qcs@j&*gyeqr+$ty@s^-$@a2e@--403vb@d6zn!4g')
+SECRET_KEY = env('SECRET_KEY')
 BREVO_API_KEY = env('BREVO_API_KEY')
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 DEBUG = env('DEBUG')
