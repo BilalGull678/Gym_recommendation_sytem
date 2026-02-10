@@ -33,7 +33,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = env('django-insecure-z-o3nqgr-qcs@j&*gyeqr+$ty@s^-$@a2e@--403vb@d6zn!4g')
 BREVO_API_KEY = env('BREVO_API_KEY')
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 DEBUG = env('DEBUG')
@@ -46,7 +46,7 @@ DEBUG = env('DEBUG')
 # SECURITY WARNING: keep the secret key used in production secret!
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -130,7 +130,7 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
     
     'ALGORITHM': 'HS256',
-    'SIGNING_KEY': 'django-insecure-z-o3nqgr-qcs@j&*gyeqr+$ty@s^-$@a2e@--403vb@d6zn!4g',
+    'SIGNING_KEY': SECRET_KEY,
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 # Password validation
